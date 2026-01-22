@@ -21,13 +21,21 @@ function App() {
     { code: "ru", name: "Russian" },
   ];
 
+  const socketRef = useRef();
+
   const handleLogin = (e) => {
     e.preventDefault();
     if (!username) return;
 
-    const socket = io("http://localhost:3000");
-    socket.on("connect", () => {
-      console.log(socket.id);
+    socketRef.current = io("http://localhost:3000");
+    socketRef.current.on("connect", () => {
+      console.log(socketRef.current.id);
+    });
+
+    socketRef.current.emit("set_language", { language: language });
+
+    socketRef.current.on("chat_message", (messageData) => {
+      setMessages((prevData) => [...prevData, messageData]);
     });
     setIsLoggedIn(true);
   };
@@ -35,6 +43,17 @@ function App() {
   const sendMessage = (e) => {
     e.preventDefault();
     if (!inputText.trim()) return;
+
+    socketRef.current.emit("chat_message", {
+      user: username,
+      text: inputText,
+      language: language,
+    });
+    // setMessages((prevData) => [
+    //   ...prevData,
+    //   { user: username, text: inputText },
+    // ]);
+    console.log(inputText);
     setInputText("");
   };
 
