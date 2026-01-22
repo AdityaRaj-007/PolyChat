@@ -36,6 +36,7 @@ function App() {
 
     socketRef.current.on("chat_message", (messageData) => {
       setMessages((prevData) => [...prevData, messageData]);
+      window.scrollTo(0, document.body.scrollHeight);
     });
     setIsLoggedIn(true);
   };
