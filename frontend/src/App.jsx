@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -23,6 +24,11 @@ function App() {
   const handleLogin = (e) => {
     e.preventDefault();
     if (!username) return;
+
+    const socket = io("http://localhost:3000");
+    socket.on("connect", () => {
+      console.log(socket.id);
+    });
     setIsLoggedIn(true);
   };
 
